@@ -4,8 +4,8 @@ import os
 import sys
 import re
 
-def reinstall(apkPath, packageName):
-	if (len(packageName) > 0 and os.popen('adb shell pm path ' + packageName).readlines()) :
+def reinstall(apkPath, packageName, needUninstall):
+	if (needUninstall and len(packageName) > 0 and os.popen('adb shell pm path ' + packageName).readlines()) :
 		print '====== 卸载Apk ======'
 		os.system('adb uninstall ' + packageName)
 	print '====== 安装Apk ======'
@@ -35,7 +35,8 @@ def main():
 		launchActivity = match.group().replace('\'', '')
 		print 'launchActivity = ' + launchActivity
 
-	reinstall(apkPath, packageName)
+	justReplace = len(sys.argv) >= 3 and sys.argv[2] == '-r'
+	reinstall(apkPath, packageName, not justReplace)
 	if (len(packageName) > 0 and len(launchActivity) > 0):
 		print '====== 启动' + packageName + ' ======'
 		os.system('adb shell am start -n ' + packageName + '/' + launchActivity)
