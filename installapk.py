@@ -18,7 +18,14 @@ def main():
 	print '====== 解析Apk ======'
 	packageName = ''
 	launchActivity = ''
-	apkPath = sys.argv[1]
+	apkPath = sys.argv[len(sys.argv) - 1]
+
+	justReplace = False
+	if len(sys.argv) >= 3 :
+		for i in range(1, len(sys.argv) - 1):
+			args = sys.argv[i]
+	    	if args == '-r':
+				justReplace = True
 
 	originPackageInfo = os.popen('aapt d badging ' + apkPath + ' | grep package').readlines()
 
@@ -35,7 +42,6 @@ def main():
 		launchActivity = match.group().replace('\'', '')
 		print 'launchActivity = ' + launchActivity
 
-	justReplace = len(sys.argv) >= 3 and sys.argv[2] == '-r'
 	reinstall(apkPath, packageName, not justReplace)
 	if (len(packageName) > 0 and len(launchActivity) > 0):
 		print '====== 启动' + packageName + ' ======'
